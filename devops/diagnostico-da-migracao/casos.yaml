@@ -1,0 +1,9 @@
+- vars:
+    estado_atual_forge: "Forge hoje:\n- ingestão: um job em cron acorda a cada 60min (o \"forge-batch-ingest\")\n\
+      - transformação: 14 etapas de processamento encadeadas (em Spark), ~40min no total\n- destino: grava em tabelas\
+      \ no data warehouse, particionadas por hora\n- ponto frágil: se um lote falha, o próximo acumula o dobro de\
+      \ volume\n- quem depende do Forge: Sentinel (lê as tabelas agregadas), Cerebro (indexa\n  os eventos transformados)\
+      \ e os relatórios de billing da Pepper (rodam de madrugada)\n\nO que a migração precisa garantir:\n- consumir\
+      \ do Relay continuamente, processando em pequenos blocos no lugar do lote de 1h\n- manter quem depende do\
+      \ Forge funcionando durante a transição\n- nada de virada única (big-bang): a migração tem que ir em passos\
+      \ e poder voltar atrás\n"

@@ -1,59 +1,32 @@
-# Catálogo de prompts
+# Playbook de IA operacional
 
-Coleção de prompts em Markdown organizados por categoria/área de domínio. Cada prompt vive em sua própria pasta, contendo o arquivo `prompt.md` (texto puro, pronto para copiar e colar) e um `README.md` com metadados, variáveis e exemplos de uso.
+Trabalho do MBA para analisar os cenários da Aegis com prompts parametrizáveis, testes promptfoo e GitHub Actions.
 
-Este repositório faz parte do material dos projetos da pós-graduação em AIOps e Inteligência Artificial com Engenharia Cloud: [pos.veronez.io/pos-aiops](https://pos.veronez.io/pos-aiops/).
+Os oito prompts foram executados localmente. O juiz foi calibrado contra uma referência de IA, substituindo a avaliação humana por orientação do responsável pela entrega. O [pipeline no GitHub Actions](https://github.com/thiagomarc96/mba-ia-playbook-operacional/actions/workflows/avaliar.yml) executa a suíte em push e pull request. A rodada local de referência teve 17 aprovações e duas reprovações por latência (pods e notas), sem reduzir o limite do enunciado.
 
-Convenções de estrutura, nomenclatura e manutenção estão em [`CLAUDE.md`](./CLAUDE.md).
+Use Node.js 24, uma chave Google e uma chave OpenAI:
 
-## Como usar
+```bash
+npm ci
+npm test
+cp .env.example .env
+npx promptfoo eval -c devops/nota-de-triagem/promptfooconfig.yaml --env-file .env --no-cache --max-concurrency 1 --delay 4500
+```
 
-1. Navegar até a categoria de interesse.
-2. Abrir o `README.md` do prompt para entender objetivo, variáveis esperadas e limitações.
-3. Copiar o conteúdo do `prompt.md` e substituir os placeholders `{{nome_variavel}}` pelos valores desejados.
+Não sobrescreva um `.env` existente. Execute as outras configurações da mesma forma. Para uma nova execução encadeada do Forge, passe a resposta de cada elo ao parâmetro do seguinte. Os casos de teste contêm as saídas reais da execução documentada.
 
-## Adicionando um prompt
+A biblioteca usa meta-prompting, papéis, instruções de formato, comparação de alternativas, encadeamento e verificação/refino. O few-shot inicial das notas foi substituído após contaminar respostas com fatos dos exemplos. Gemini 3.5 Flash-Lite criou os prompts; Gemini 3.1 Flash-Lite e GPT-4o-mini foram usados nas avaliações locais. No CI, uso GPT-4o-mini nas saídas estruturadas, Gemini 3.5 Flash-Lite na comparação das notas e GPT-4.1 mini nas análises abertas e no julgamento. [Modelos, custo e privacidade](privacidade.md).
 
-Use o slash command [`/catalogar`](./.claude/commands/catalogar.md) passando o texto do prompt como argumento. Ele analisa, propõe organização (categoria, slug, frontmatter) e, após sua aprovação, escreve os arquivos e atualiza os índices — sem commitar. Convenções completas em [`CLAUDE.md`](./CLAUDE.md).
+Prompts e evidências:
 
-## Categorias
+- [Triagem de pods](devops/triagem-de-pods/): CP01 e CP08.
+- [Nota de triagem](devops/nota-de-triagem/): CP02 e CP08.
+- [Causa-raiz](devops/causa-raiz/): CP03 e CP09.
+- [Decisão de backpressure](devops/decisao-de-backpressure/): CP04.
+- [Diagnóstico](devops/diagnostico-da-migracao/), [etapas](devops/etapas-da-migracao/) e [plano](devops/plano-da-migracao/): cadeia do CP05.
+- [NetworkPolicy](devops/networkpolicy-sentinel/): CP06 e CP08.
+- [Pipeline e decisões comparadas](pipeline.md): CP10.
 
-### [Desenvolvimento](./desenvolvimento/)
+Base: [prompt-registry](https://github.com/fabricioveronez/prompt-registry), commit e32d6791b1d1edfe55ed8cea23cdbbd35f184a4e. Para o CP07, os oito prompts ficam em devops, cada um com prompt.md, README.md, inputs equivalentes aos placeholders e versão inicial 1.0.0. O CP05 ocupa três pastas porque exige uma cadeia. O histórico original e as categorias vazias foram preservados. A [triagem de pods](devops/triagem-de-pods/) é um exemplo completo do formato.
 
-Escrita, revisão e refatoração de código, design de APIs e arquitetura, debugging, testes e documentação técnica.
-
-_Nenhum prompt cadastrado ainda._
-
-### [DevOps](./devops/)
-
-Pipelines de CI/CD, containers, orquestração, infraestrutura como código, observabilidade, SRE e segurança operacional.
-
-_Nenhum prompt cadastrado ainda._
-
-### [Produtividade](./produtividade/)
-
-Organização pessoal, gestão de tempo e tarefas, rotina, hábitos, foco e decisões sobre fluxo de trabalho individual.
-
-_Nenhum prompt cadastrado ainda._
-
-### [Finanças](./financas/)
-
-Orçamento, investimentos, planejamento financeiro, impostos e apoio a decisões financeiras.
-
-_Nenhum prompt cadastrado ainda._
-
-### [Criação de Conteúdo](./criacao-conteudo/)
-
-Roteiros, artigos, posts para redes sociais, material didático e copy de divulgação.
-
-_Nenhum prompt cadastrado ainda._
-
-<!--
-Ao adicionar um prompt, substituir "Nenhum prompt cadastrado ainda" pela lista:
-
-- [nome-do-prompt](./<slug-da-categoria>/<slug-do-prompt>/) — o que o prompt faz, em uma linha.
--->
-
-## Contribuindo
-
-Antes de adicionar ou alterar um prompt, revisar [`CLAUDE.md`](./CLAUDE.md) — a seção **Manutenção da documentação** lista todos os arquivos que precisam ser atualizados junto com a mudança (este índice incluso).
+Categorias herdadas: [desenvolvimento](desenvolvimento/README.md), [produtividade](produtividade/README.md), [finanças](financas/README.md) e [criação de conteúdo](criacao-conteudo/README.md).

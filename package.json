@@ -1,0 +1,12 @@
+{
+  "name": "playbook-ia-operacional",
+  "private": true,
+  "scripts": {
+    "avaliar": "promptfoo eval --env-file .env --no-cache --max-concurrency 1",
+    "test": "node --test scripts/juiz.test.cjs"
+  },
+  "devDependencies": {
+    "promptfoo": "0.122.2",
+    "yaml": "2.8.2"
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "A": {
+    "Causa-raiz correta": {
+      "nota": 1,
+      "evidência": "Cita esgotamento do heap, mas não aborda a reindexação travada como causa principal."
+    },
+    "Correlação × causa": {
+      "nota": 2,
+      "evidência": "Distingue corretamente entre efeitos (cache hit caindo) e causas (esgotamento do heap)."
+    },
+    "Ação proporcional": {
+      "nota": 1,
+      "evidência": "Sugere aumentar a heap, mas não considera rever limites ou ajustar a reindexação de forma mais detalhada."
+    },
+    "Honestidade epistêmica": {
+      "nota": 1,
+      "evidência": "Reconhece incertezas, mas não fornece uma análise clara sobre a adequação da configuração do cluster."
+    }
+  },
+  "B": {
+    "Causa-raiz correta": {
+      "nota": 1,
+      "evidência": "Cita concorrência de recursos, mas não menciona a reindexação travada como causa principal."
+    },
+    "Correlação × causa": {
+      "nota": 2,
+      "evidência": "Distingue claramente entre efeitos e causas, como o cache hit caindo."
+    },
+    "Ação proporcional": {
+      "nota": 2,
+      "evidência": "Propõe ações coerentes como suspender o job de reindexação e investigar logs."
+    },
+    "Honestidade epistêmica": {
+      "nota": 1,
+      "evidência": "Reconhece incertezas, mas faz suposições sobre a causa do atraso sem evidências."
+    }
+  }
+}

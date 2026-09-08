@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Propósito do repositório
 
-Catálogo de prompts em Markdown organizados por categoria / área de domínio. Não há código executável, build, testes ou pipeline — é um repositório documental cuja qualidade é medida pela clareza dos prompts e pela consistência da estrutura.
+Catálogo de prompts em Markdown organizados por categoria / área de domínio. O playbook inclui testes promptfoo junto de cada prompt e um workflow GitHub Actions. A qualidade é medida pela clareza, consistência da estrutura e resultados reais das avaliações.
 
 Compõe o material dos projetos da pós-graduação em AIOps e Inteligência Artificial com Engenharia Cloud ([pos.veronez.io/pos-aiops](https://pos.veronez.io/pos-aiops/)) — decisões de escopo e convenções devem considerar esse uso didático.
 

@@ -1,0 +1,80 @@
+name: Avaliar playbook
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+  pull-requests: write
+concurrency:
+  group: playbook-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  avaliar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      max-parallel: 4
+      matrix:
+        prompt:
+          - triagem-de-pods
+          - nota-de-triagem
+          - causa-raiz
+          - decisao-de-backpressure
+          - diagnostico-da-migracao
+          - etapas-da-migracao
+          - plano-da-migracao
+          - networkpolicy-sentinel
+    env:
+      GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      PROMPTFOO_DISABLE_TELEMETRY: '1'
+      PROMPTFOO_CONFIG_DIR: ${{ github.workspace }}/.promptfoo
+      PROMPTFOO_CACHE_PATH: ${{ github.workspace }}/.promptfoo/cache
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - name: Conferir acesso e entradas
+        run: |
+          test -n "$GOOGLE_API_KEY"
+          test -n "$OPENAI_API_KEY"
+          if rg 'PENDENTE:' devops --glob casos.yaml; then exit 1; fi
+          mkdir -p resultados
+      - name: Conferir cálculo das notas e calibração
+        run: |
+          npm test
+          node scripts/conferir-calibracao.cjs
+      - name: Avaliar versão atual e comentar no PR
+        id: avaliacao
+        uses: promptfoo/promptfoo-action@04839e664f52212b877170219dab0d7ad2bf6440 # v1
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          config: devops/${{ matrix.prompt }}/promptfooconfig.yaml
+          prompts: devops/${{ matrix.prompt }}/prompt.md
+          promptfoo-version: '0.122.2'
+          use-config-prompts: 'true'
+          force-run: 'true'
+          no-share: 'true'
+          no-cache: 'true'
+          max-concurrency: '1'
+          fail-on-threshold: '100'
+      - name: Guardar resultado real
+        if: always() && steps.avaliacao.outcome != 'skipped'
+        run: npx --no-install promptfoo export eval latest --output resultados/atual.json
+      - name: Comparar qualidade com a versão anterior
+        env:
+          BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
+          PASTA: devops/${{ matrix.prompt }}
+        run: node scripts/comparar.cjs "$PASTA" "$BASE"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: avaliacao-${{ matrix.prompt }}
+          path: resultados/
+          retention-days: 30

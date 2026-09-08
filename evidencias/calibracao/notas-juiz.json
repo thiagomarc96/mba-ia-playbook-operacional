@@ -1,0 +1,39 @@
+{
+  "modelo": "gpt-4.1-mini, notas geradas pela IA e corte calculado em scripts/juiz.cjs",
+  "A": {
+    "Causa-raiz correta": {
+      "nota": 1,
+      "evidência": "Aponta o esgotamento da heap como causa provável, mas não identifica claramente a reindexação travada saturando o heap como causa raiz, confundindo sintomas com causa."
+    },
+    "Correlação × causa": {
+      "nota": 2,
+      "evidência": "Distingue corretamente que a queda do cache hit e o aumento do tempo de busca são efeitos da sobrecarga, não causas."
+    },
+    "Ação proporcional": {
+      "nota": 1,
+      "evidência": "Propõe aumentar a heap e ajustar a reindexação, mas não diferencia claramente entre rever limites e escolher novo tamanho sem evidência concreta."
+    },
+    "Honestidade epistêmica": {
+      "nota": 1,
+      "evidência": "Reconhece incertezas e limitações dos dados, mas inclui afirmações não totalmente suportadas, como aumento de consultas sem evidência clara e horários específicos inventados."
+    }
+  },
+  "B": {
+    "Causa-raiz correta": {
+      "nota": 1,
+      "evidência": "Aponta a concorrência entre reindexação atrasada e carga de escrita/busca como causa, mas não identifica claramente que a reindexação travada saturou o heap, levando ao circuit breaker e queda do cache."
+    },
+    "Correlação × causa": {
+      "nota": 2,
+      "evidência": "Distingue corretamente que o aumento da carga e a reindexação são causas, enquanto a queda do cache hit é consequência."
+    },
+    "Ação proporcional": {
+      "nota": 2,
+      "evidência": "Propõe suspender o job de reindexação para liberar recursos e sugere monitoramento e ajustes posteriores, coerente com o diagnóstico."
+    },
+    "Honestidade epistêmica": {
+      "nota": 1,
+      "evidência": "Reconhece hipóteses e incertezas, mas inclui afirmações não evidenciadas como fatos, como aumento da taxa de indexação sem confirmação e detalhes de horários precisos."
+    }
+  }
+}

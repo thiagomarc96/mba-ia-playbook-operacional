@@ -1,0 +1,47 @@
+- vars:
+    cenario_original: "Forge hoje:\n- ingestão: um job em cron acorda a cada 60min (o \"forge-batch-ingest\")\n\
+      - transformação: 14 etapas de processamento encadeadas (em Spark), ~40min no total\n- destino: grava em tabelas\
+      \ no data warehouse, particionadas por hora\n- ponto frágil: se um lote falha, o próximo acumula o dobro de\
+      \ volume\n- quem depende do Forge: Sentinel (lê as tabelas agregadas), Cerebro (indexa\n  os eventos transformados)\
+      \ e os relatórios de billing da Pepper (rodam de madrugada)\n\nO que a migração precisa garantir:\n- consumir\
+      \ do Relay continuamente, processando em pequenos blocos no lugar do lote de 1h\n- manter quem depende do\
+      \ Forge funcionando durante a transição\n- nada de virada única (big-bang): a migração tem que ir em passos\
+      \ e poder voltar atrás\n"
+    diagnostico_anterior: '### Diagnóstico de Migração: Pipeline Forge
+
+
+      **Fatos e Dependências**
+
+      O Forge opera via *cron* (60min), com processamento Spark de 40min. A latência de ponta a ponta é composta
+      por: **[Espera pelo disparo (até 60min)] + [Tempo de processamento (40min)]**. O sistema possui 14 etapas
+      encadeadas, criando um acoplamento rígido. As dependências críticas são Sentinel (leitura DW), Cerebro (indexação)
+      e Pepper (faturamento).
+
+
+      **Pontos Frágeis e Gargalos**
+
+      1. **Efeito Cascata:** A falha em um lote gera acúmulo de volume, elevando o tempo de processamento e podendo
+      exceder a janela de 60min, o que inviabiliza a estabilidade do cron.
+
+      2. **Latência de Negócio:** O modelo atual impõe um atraso mínimo de 40min e máximo de 100min para que dados
+      estejam disponíveis.
+
+
+      **Riscos na Coexistência (Lote vs. Fluxo)**
+
+      1. **Duplicação:** Sem controle de idempotência no destino, a coexistência do *batch* (que sobrescreve/appenda
+      por hora) com o consumo contínuo do Relay causará duplicidade nos dados lidos pelo Sentinel e Cerebro.
+
+      2. **Concorrência de Escrita:** O DW particionado por hora pode sofrer *locks* ou corrupção se o processo
+      *event-driven* tentar gravar na mesma partição que o *batch* ainda está processando.
+
+
+      **Informações Faltantes**
+
+      *   **Contratos de Consumo:** Não há clareza se Sentinel/Cerebro suportam leitura de *streams* ou se exigem
+      persistência em tabelas.
+
+      *   **Mecanismo de Rollback:** Falta definir a estratégia de *dual-write* ou *shadow-mode* para garantir a
+      reversibilidade sem perda de integridade no faturamento da Pepper.
+
+      *   **Idempotência:** Não há evidência de chaves de negócio para deduplicação no destino.'

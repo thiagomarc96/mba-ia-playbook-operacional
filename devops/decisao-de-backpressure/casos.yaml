@@ -1,0 +1,7 @@
+- vars:
+    cenario_relay: "Relay (barramento de eventos):\n- throughput sustentado: 180k msgs/s\n- pico observado no incidente\
+      \ da semana passada: 320k msgs/s por 25min\n- retenção atual: 4h\n- consumidores: Forge (ingestão), Sentinel\
+      \ (alerting em tempo real)\n\nRestrições do time:\n- alerting do Sentinel não pode atrasar mais que 60s (SLA\
+      \ com cliente)\n- ingestão do Forge pode atrasar até 15min sem violar SLA\n- orçamento de infra do trimestre\
+      \ já está 8% acima do previsto\n- Steve Rogers lembra que o barramento antigo perdia mensagens sob pico,\n\
+      \  e perda de telemetry é inaceitável para um produto de observabilidade\n"

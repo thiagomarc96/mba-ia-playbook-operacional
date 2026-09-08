@@ -1,0 +1,38 @@
+{
+  "A": {
+    "Causa-raiz correta": {
+      "nota": 2,
+      "evidência": "Identificou o esgotamento da memória heap como causa da degradação."
+    },
+    "Correlação × causa": {
+      "nota": 2,
+      "evidência": "Distinção clara entre a queda do cache hit e a causa do problema."
+    },
+    "Ação proporcional": {
+      "nota": 2,
+      "evidência": "Recomendações para aumentar a heap e ajustar a reindexação são adequadas."
+    },
+    "Honestidade epistêmica": {
+      "nota": 1,
+      "evidência": "Reconhece incertezas sobre a contribuição da reindexação, mas poderia ser mais explícito."
+    }
+  },
+  "B": {
+    "Causa-raiz correta": {
+      "nota": 2,
+      "evidência": "Identificou a concorrência de recursos como causa principal."
+    },
+    "Correlação × causa": {
+      "nota": 2,
+      "evidência": "Distinção clara entre o aumento do cache hit e a causa do problema."
+    },
+    "Ação proporcional": {
+      "nota": 2,
+      "evidência": "Ação de suspender o job de reindexação é adequada ao diagnóstico."
+    },
+    "Honestidade epistêmica": {
+      "nota": 2,
+      "evidência": "Reconheceu incertezas sobre a causa do atraso na reindexação."
+    }
+  }
+}

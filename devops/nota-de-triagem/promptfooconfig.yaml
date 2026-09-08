@@ -1,0 +1,40 @@
+description: nota-de-triagem
+prompts:
+- file://prompt.md
+providers:
+- id: google:gemini-3.5-flash-lite
+  config:
+    temperature: 0
+    maxOutputTokens: 2400
+    inputCost: 3.0e-07
+    outputCost: 2.5e-06
+- id: openai:gpt-4o-mini
+  config:
+    temperature: 0
+    max_tokens: 2400
+tests: file://casos.yaml
+sharing: false
+defaultTest:
+  assert:
+  - type: latency
+    threshold: 5000
+  - type: cost
+    threshold: 0.01
+  - type: contains
+    value: 'ALERTA:'
+  - type: contains
+    value: 'IMPACTO:'
+  - type: contains
+    value: 'HIPÓTESE INICIAL:'
+  - type: contains
+    value: 'AÇÃO IMEDIATA:'
+  - type: contains
+    value: 'ESCALAR PARA:'
+  - type: regex
+    value: ESCALAR PARA:.*@\w+
+  - type: javascript
+    value: output.trim().split(/\r?\n/).length <= 8
+  - type: regex
+    value: AÇÃO IMEDIATA:\s*\S.{15,}
+  - type: not-contains
+    value: efeito conhecido ou provável
